@@ -1,6 +1,6 @@
 # Generate Report
 PowerShell script that will generate form reports using SceneDoc's API. Please keep in mind this is just an example of what you can do,
-please feel free to edit the code to meet your intentions.
+feel free to edit the code to meet your intentions.
 
 ## Getting Started
 This script will get you up and running for generating Form Submission/Citation reports. 
