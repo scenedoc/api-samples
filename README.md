@@ -13,5 +13,5 @@ You will require an account on one of SceneDoc's production or training servers 
 
 ## Authentication
 
-SceneDoc's API uses `Basic` auth for authentication where the Access Key ID is the Username and the Token is the password.  Some tools/libraries will allow you to provide username and password when authenticating.  If you are required to generate the Basic Authorization header manually, <a href="https://gist.github.com/brandonmwest/a2632d0a65088a20c00a" target="_blank">here</a> is a link to a resource which will help you generate these headers.
+SceneDoc's API uses `Basic` auth for authentication where the Access Key ID is the username and the Token is the password.  Some tools/libraries will allow you to provide username and password when authenticating.  If you are required to generate the Basic Authorization header manually, <a href="https://gist.github.com/brandonmwest/a2632d0a65088a20c00a" target="_blank">here</a> is a link to a resource which will help you generate these headers.
 
