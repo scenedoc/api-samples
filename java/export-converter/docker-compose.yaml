@@ -15,6 +15,6 @@ services:
         - mongo
     environment:
         - MONGO_HOST=mongo
+        - URL=https://qa.scenedoc.com
         - API_KEY=
         - API_SECRET_KEY=
-        - URL=
