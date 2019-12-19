@@ -1,5 +1,7 @@
 package com.tylertech.scenedoc.exportconverter.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 
 @Service
 public class SceneDocClientService {
+    protected final Log LOG = LogFactory.getLog(this.getClass());
 
     private String url;
     private String apiKey;
@@ -21,8 +24,12 @@ public class SceneDocClientService {
     public void initialize() throws Exception {
         apiKey = System.getenv("API_KEY");
         apiSecretKey = System.getenv("API_SECRET_KEY");
-        if (apiKey==null || apiSecretKey==null) throw new Exception("API_KEY and API_SECRET_KEY are required");
         url = System.getenv("URL");
+
+        if (apiKey==null || apiSecretKey==null || url==null) throw new Exception("API_KEY, API_SECRET_KEY and URL are required");
+
+        LOG.info("SceneDoc Server URL: " + url);
+        LOG.info("User API Key: " + apiKey);
 
         HttpHeaders hdrs = new HttpHeaders();
         hdrs.setContentType(MediaType.APPLICATION_JSON);
