@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.json.JSONObject;
@@ -39,12 +40,26 @@ public class ExportConverterService {
     @Autowired
     MongoClientService mongoClientService;
 
+
+    /**
+     *
+     * Downloads export file from SceneDoc and loads the file into Mongo
+     *
+     * @throws Exception
+     */
+    @Async
+    public void generateAndLoadExportFile(Long dateFrom) throws Exception {
+        String timelineEntryId = this.generateExportFileFromSceneDoc(dateFrom);
+        File exportFile = this.downloadExportFileWithRetries(timelineEntryId);
+        this.extractCsvFilesFromExport(exportFile);
+    }
+
     /**
      * Generate Export file from SceneDoc
      */
-    public String generateExportFileFromSceneDoc() throws Exception {
+    public String generateExportFileFromSceneDoc(Long dateFrom) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
-        String url = sceneDocClientService.getUrl() + "/rest/timelines/generate-organization-csv";
+        String url = sceneDocClientService.getUrl() + "/rest/timelines/generate-organization-csv?from=" + dateFrom;
         LOG.info("Requesting report generation file at: " + url);
         ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST, sceneDocClientService.getHeaders(), String.class);
         if (result!=null && result.getStatusCode().is2xxSuccessful()){
@@ -126,8 +141,8 @@ public class ExportConverterService {
             zis.closeEntry();
             ze = zis.getNextEntry();
 
-            LOG.info("Parsing CSV and loading into DB: " + newFile.getName());
-            parseCsvIntoJson(newFile);
+            LOG.info("Parsing CSV and loading into DB: " + fileName);
+            parseCsvIntoJson(newFile, fileName);
         }
         //close last ZipEntry
         zis.closeEntry();
@@ -140,11 +155,11 @@ public class ExportConverterService {
     /**
      * Convert CSV file into JSON
      */
-    public void parseCsvIntoJson(File csvFile) throws IOException {
+    public void parseCsvIntoJson(File csvFile, String fileName) throws IOException {
         List<Map<?, ?>> data = readObjectsFromCsv(csvFile);
         ObjectMapper mapper = new ObjectMapper();
         for (Map<?, ?> itm : data){
-            loadPayloadIntoDb(csvFile.getName(), mapper.writeValueAsString(itm));
+            loadPayloadIntoDb(fileName, mapper.writeValueAsString(itm));
         }
     }
 
