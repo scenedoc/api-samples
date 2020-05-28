@@ -51,7 +51,7 @@ if(![string]::IsNullOrEmpty($BasicCreds)){
             do {
                 $rGetTimelineEntryByIdResponse = Invoke-WebRequest -Uri $baseUrl"/rest/timelines/"$id -Method Get -Headers @{"Authorization"="Basic $BasicCreds"} -TimeoutSec $Timeout
                 $contentUploaded = ConvertFrom-Json $rGetTimelineEntryByIdResponse.Content
-            } while($contentUploaded.mediaStatus -ne "UPLOADED")
+            } while($contentUploaded.mediaStatus -ne "UPLOADED" -AND $contentUploaded.entryType -ne "NOTE")
 
             if($contentUploaded.entryType -eq "NOTE"){
                 Write-Output "No submissions found"
