@@ -62,8 +62,6 @@ if(![string]::IsNullOrEmpty($BasicCreds)){
                 $output = $ScriptPath + "/" + $content.fileName
                 $stream = $baseUrl + "/rest/timelines/stream/" + $id
 
-                $start_time = Get-Date
-
                 # Using System.Net.WebClient Speed is great as the HTTP response stream is buffered to disk throughout the download process.
                 # There is also the option of System.Net.WebClient.DownloadFileAsync(). If you'd like your script to continue while the file downloads in parallel.
                 $wc = New-Object System.Net.WebClient
@@ -79,7 +77,6 @@ if(![string]::IsNullOrEmpty($BasicCreds)){
                     # once files are done downloading
                     $wc.Dispose()
                 }
-                Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
             }
         }
     } catch {
