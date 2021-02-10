@@ -10,7 +10,7 @@ $token = ""
 $formCanonicalId = 12345
 $reportFormat = "~PDF Mapping 2_MAPPING,^Sunridge"
 
-$dateFrom = [int][double]::Parse((Get-Date -Date ([DateTime]::Today.AddDays(-7)) -UFormat %s)) # will fetch anything in the last 7 days
+$dateFrom = [int](Get-Date (Get-Date).AddDays(-7) -UFormat %s -Millisecond 0) # will fetch anything in the last 7 days
 $dateFromUnix = $dateFrom.ToString() + "000"
 $dateTo = [int](Get-Date -UFormat %s -Millisecond 0)
 $dateToUnix = $dateTo.ToString() + "000"
