@@ -15,6 +15,9 @@ $dateFromUnix = $dateFrom.ToString() + "000"
 $dateTo = [int](Get-Date -UFormat %s -Millisecond 0)
 $dateToUnix = $dateTo.ToString() + "000"
 
+$metricEvent = "HEALTHCHECK"
+$actionType = "CREATE"
+
 # modify at own risk
 $Timeout = 30 # seconds
 function Get-BasicAuthCreds {
@@ -58,6 +61,9 @@ if(![string]::IsNullOrEmpty($BasicCreds)){
             } elseif($contentUploaded.mediaStatus -eq "ERROR") {
                 Write-Output "ERROR"
             } else {
+                # Health check
+                $mHC = Invoke-WebRequest -Uri $baseUrl"/rest/v1/create-metric/" -Method Post -Headers @{"Authorization"="Bearer $token"} -Body ($metricparams|ConvertTo-Json) -ContentType "application/json" -TimeoutSec $Timeout
+
                 $ScriptPath = Split-Path -parent $MyInvocation.MyCommand.Definition
                 $output = $ScriptPath + "/" + $content.fileName
                 $stream = $baseUrl + "/rest/timelines/stream/" + $id
@@ -68,6 +74,14 @@ if(![string]::IsNullOrEmpty($BasicCreds)){
                 $wc.Headers["Authorization"] = "Basic $BasicCreds"
                 try {
                     $wc.DownloadFile($stream, $output)
+                    $metricEvent = "PRINTED"
+                    $metricparams = @{
+                        "metric"=$metricEvent;
+                        "action"=$actionType;
+                    }
+                    # Printed
+                    $mP = Invoke-WebRequest -Uri $baseUrl"/rest/v1/create-metric/" -Method Get -Headers @{"Authorization"="Basic $BasicCreds"} -Body ($metricparams|ConvertTo-Json) -ContentType "application/json" -TimeoutSec $Timeout
+                    
                     Write-Output "------------------------------------"
                     Write-Output "|  Download completed successfully |"
                     Write-Output "------------------------------------"
