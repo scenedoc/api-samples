@@ -39,6 +39,11 @@ $params = @{
     "dateTo"=$dateToUnix;
 }
 
+$metricparams = @{
+    "metric"=$metricEvent;
+    "action"=$actionType;
+}
+
 $BasicCreds = Get-BasicAuthCreds -Username $accessKeyId -Password $token
 if(![string]::IsNullOrEmpty($BasicCreds)){
     try {
