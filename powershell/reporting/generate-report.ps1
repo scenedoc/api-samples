@@ -69,7 +69,7 @@ if(![string]::IsNullOrEmpty($BasicCreds)){
                 # Health check
                 $mHC = Invoke-WebRequest -Uri $baseUrl"/rest/v1/create-metric/" -Method Post -Headers @{"Authorization"="Bearer $token"} -Body ($metricparams|ConvertTo-Json) -ContentType "application/json" -TimeoutSec $Timeout
 
-                $ScriptPath = Split-Path -parent $MyInvocation.MyCommand.Definition
+                $ScriptPath = $PSScriptRoot # contains full path of the execution script's parent directory
                 $output = $ScriptPath + "/" + $content.fileName
                 $stream = $baseUrl + "/rest/timelines/stream/" + $id
 
@@ -93,8 +93,15 @@ if(![string]::IsNullOrEmpty($BasicCreds)){
                 } catch [System.Net.WebException]  {  
                     Write-Warning "Download of $stream failed"  
                 } finally {
-                    # once files are done downloading
+                    # close web client connection once files are done downloading
                     $wc.Dispose()
+                    
+                    # uncomment below if you want to unzip file and delete it.
+
+                    # unzip file
+                    # Expand-Archive -LiteralPath $output -DestinationPath "./Citation" -Force
+                    # delete zip file
+                    # Remove-Item $output
                 }
             }
         }
